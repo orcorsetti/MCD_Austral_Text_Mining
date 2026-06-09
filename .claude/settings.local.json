@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /d \"d:\\\\GitHub\\\\MCD_Austral_Text_Mining\")",
+      "Bash(conda run *)",
+      "PowerShell(conda run -n ds_cuda pip install openpyxl 2>&1)",
+      "PowerShell(Get-Command python)",
+      "PowerShell(& \"C:\\\\Users\\\\orcor\\\\anaconda3\\\\envs\\\\ds_cuda\\\\python.exe\" -m pip install openpyxl 2>&1)",
+      "Bash(ls /mnt/d/GitHub/MCD_Austral_Text_Mining/data/ 2>/dev/null && echo \"found\" || echo \"empty or not found\")",
+      "Read(//mnt/d/GitHub/MCD_Austral_Text_Mining/**)",
+      "Bash(wc -c \"C:/Users/orcor/.claude/projects/d--GitHub-MCD-Austral-Text-Mining/6bcc50af-3d02-493f-8891-7df0f0216b75.jsonl\" 2>/dev/null && echo \"file exists\")",
+      "Read(//c/Users/orcor/.claude/projects/d--GitHub-MCD-Austral-Text-Mining/**)",
+      "Bash(python -c ' *)"
+    ]
+  }
+}
