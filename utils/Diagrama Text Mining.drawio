@@ -91,6 +91,19 @@
         <mxCell id="pos9xCRZskUfuNPnbi63-67" edge="1" parent="1" source="pos9xCRZskUfuNPnbi63-64" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-66">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="jz5tBNBTwsEbOXa9WYum-4" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;endFill=0;startArrow=classic;startFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="483" y="800" />
+              <mxPoint x="483" y="439" />
+              <mxPoint x="430" y="439" />
+              <mxPoint x="430" y="180" />
+              <mxPoint x="341" y="180" />
+            </Array>
+            <mxPoint x="328" y="800" as="sourcePoint" />
+            <mxPoint x="341" y="107" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="pos9xCRZskUfuNPnbi63-64" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Seleccion de Top N segun solicitud en el request" vertex="1">
           <mxGeometry height="60" width="150" x="175" y="770" as="geometry" />
         </mxCell>
@@ -129,6 +142,12 @@
         </mxCell>
         <mxCell id="pos9xCRZskUfuNPnbi63-2" parent="pos9xCRZskUfuNPnbi63-3" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Formulario Paciente" vertex="1">
           <mxGeometry height="30" width="60" x="5" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="jz5tBNBTwsEbOXa9WYum-1" parent="pos9xCRZskUfuNPnbi63-70" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://icons.diagrams.net/icon-cache1/Heroicons_UI-2892/variable-596.svg" value="" vertex="1">
+          <mxGeometry height="24" width="24" x="326" y="53" as="geometry" />
+        </mxCell>
+        <mxCell id="jz5tBNBTwsEbOXa9WYum-2" parent="pos9xCRZskUfuNPnbi63-70" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="N Search" vertex="1">
+          <mxGeometry height="30" width="60" x="308" y="77" as="geometry" />
         </mxCell>
         <mxCell id="pos9xCRZskUfuNPnbi63-72" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div&gt;Posibles modelos&lt;/div&gt;pritamdeka/PubMedBERT-MNLI-MedNLI&lt;div&gt;cross-encoder/ms-marco-MiniLM-L-6-v2&lt;/div&gt;" vertex="1">
           <mxGeometry height="70" width="240" x="-240" y="635" as="geometry" />
