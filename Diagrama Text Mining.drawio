@@ -1,0 +1,154 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="cJVN_HbU4KaUxqdyG-qb">
+    <mxGraphModel dx="2278" dy="1154" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pos9xCRZskUfuNPnbi63-65" edge="1" parent="1" source="pos9xCRZskUfuNPnbi63-46" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-64">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-46" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="110" width="460" x="20" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-4" parent="1" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.json_script;" value="" vertex="1">
+          <mxGeometry height="50" width="36.54" x="230" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-75" edge="1" parent="1" source="pos9xCRZskUfuNPnbi63-5" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Datos Paciente" vertex="1">
+          <mxGeometry height="30" width="60" x="220" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-14" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="10" y="260" as="sourcePoint" />
+            <mxPoint x="820" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-18" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Procesamiento inicial (Offline)" vertex="1">
+          <mxGeometry height="1140" width="330" x="490" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-19" parent="pos9xCRZskUfuNPnbi63-18" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.json_script;" value="" vertex="1">
+          <mxGeometry height="50" width="36.54" x="145" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-20" parent="pos9xCRZskUfuNPnbi63-18" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="ClinicalTrials.gov" vertex="1">
+          <mxGeometry height="30" width="60" x="135" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-23" edge="1" parent="pos9xCRZskUfuNPnbi63-18" source="pos9xCRZskUfuNPnbi63-15" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-15" parent="pos9xCRZskUfuNPnbi63-18" style="rounded=0;whiteSpace=wrap;html=1;" value="Normalizacion de&amp;nbsp;&lt;div&gt;Diagnostico&lt;br&gt;(&lt;span style=&quot;font-family: &amp;quot;Segoe UI&amp;quot;; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;scispaCy&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;br&gt;Condition, Keyword, Mesh&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="215" x="57.5" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-21" edge="1" parent="pos9xCRZskUfuNPnbi63-18" source="pos9xCRZskUfuNPnbi63-20" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-43" edge="1" parent="pos9xCRZskUfuNPnbi63-18" source="pos9xCRZskUfuNPnbi63-22" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-22" parent="pos9xCRZskUfuNPnbi63-18" style="rounded=0;whiteSpace=wrap;html=1;" value="Separa de la columna elegibility criteria los de inclusion vs exclusion" vertex="1">
+          <mxGeometry height="60" width="215" x="57.5" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-31" connectable="0" parent="pos9xCRZskUfuNPnbi63-18" style="group" value="" vertex="1">
+          <mxGeometry height="90" width="60.00000000000003" x="189.99999999999997" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-24" parent="pos9xCRZskUfuNPnbi63-31" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="60" width="60" x="2.842170943040401e-14" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-25" parent="pos9xCRZskUfuNPnbi63-31" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="ClinicalTrials Embeddings" vertex="1">
+          <mxGeometry height="30" width="60" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-32" connectable="0" parent="pos9xCRZskUfuNPnbi63-18" style="group" value="" vertex="1">
+          <mxGeometry height="90" width="60.00000000000003" x="90" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-33" parent="pos9xCRZskUfuNPnbi63-32" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="60" width="60" x="2.842170943040401e-14" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-34" parent="pos9xCRZskUfuNPnbi63-32" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="ClinicalTrials&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="60" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-42" parent="pos9xCRZskUfuNPnbi63-18" style="rounded=0;whiteSpace=wrap;html=1;" value="Generar embedding de inclusion e exclusion" vertex="1">
+          <mxGeometry height="60" width="215" x="57.5" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-78" edge="1" parent="pos9xCRZskUfuNPnbi63-18" source="pos9xCRZskUfuNPnbi63-42" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-79" edge="1" parent="pos9xCRZskUfuNPnbi63-18" source="pos9xCRZskUfuNPnbi63-42" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-62" edge="1" parent="1" source="pos9xCRZskUfuNPnbi63-37" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Segundo filtro quitamos todo lo que tenga un match semantico alto con los criterios de exclusion" vertex="1">
+          <mxGeometry height="60" width="200" x="150" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-39" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Scoring cross-encoder reranker de criterios" vertex="1">
+          <mxGeometry height="60" width="120" x="100" y="645" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-63" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Score General" vertex="1">
+          <mxGeometry height="30" width="60" x="20" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-67" edge="1" parent="1" source="pos9xCRZskUfuNPnbi63-64" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-66">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-64" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Seleccion de Top N segun solicitud en el request" vertex="1">
+          <mxGeometry height="60" width="150" x="175" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-69" edge="1" parent="1" source="pos9xCRZskUfuNPnbi63-66" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-68">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-66" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Pasaje por LLM para formular la explicacion de porque se elegio cada uno con:&lt;div&gt;- Criterios que matchearon&lt;br&gt;- Criterios que no coincideron por si hay faltante de datos en el form&lt;/div&gt;" vertex="1">
+          <mxGeometry height="90" width="290" x="105" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-68" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Devuelve al front lista de estudios con link parametrizado, pais/coordinadas, y explicacion de elegibilidad" vertex="1">
+          <mxGeometry height="60" width="290" x="105" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-70" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Ejecucion Usuario (Online)" vertex="1">
+          <mxGeometry height="1140" width="490" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-44" parent="pos9xCRZskUfuNPnbi63-70" style="rounded=0;whiteSpace=wrap;html=1;" value="Score Geografico" vertex="1">
+          <mxGeometry height="60" width="120" x="332" y="645" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-73" parent="pos9xCRZskUfuNPnbi63-70" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="w1 x" vertex="1">
+          <mxGeometry height="30" width="32" x="60" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-27" parent="pos9xCRZskUfuNPnbi63-70" style="rounded=0;whiteSpace=wrap;html=1;" value="Embeddear perfil del paciente" vertex="1">
+          <mxGeometry height="60" width="120" x="190" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-76" edge="1" parent="pos9xCRZskUfuNPnbi63-70" source="pos9xCRZskUfuNPnbi63-35" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-35" parent="pos9xCRZskUfuNPnbi63-70" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Primer filtro de estudios&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;- Por diagnostico&lt;/span&gt;&lt;/div&gt;- Por estado de recluting&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;- Por ECOG&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="200" x="150" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-3" connectable="0" parent="pos9xCRZskUfuNPnbi63-70" style="group" value="" vertex="1">
+          <mxGeometry height="100" width="70" x="215" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-1" parent="pos9xCRZskUfuNPnbi63-3" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://icons.diagrams.net/icon-cache1/Essential_Web_4-2054/content-form-contract-article-paper-880.svg" value="" vertex="1">
+          <mxGeometry height="70" width="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-2" parent="pos9xCRZskUfuNPnbi63-3" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Formulario Paciente" vertex="1">
+          <mxGeometry height="30" width="60" x="5" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-72" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div&gt;Posibles modelos&lt;/div&gt;pritamdeka/PubMedBERT-MNLI-MedNLI&lt;div&gt;cross-encoder/ms-marco-MiniLM-L-6-v2&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="240" x="-240" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-74" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="+&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;w2 x" vertex="1">
+          <mxGeometry height="30" width="92" x="240" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-77" edge="1" parent="1" source="pos9xCRZskUfuNPnbi63-27" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-80" parent="1" style="text;whiteSpace=wrap;html=1;" value="Primer intento por regex + parseo,&amp;nbsp;&lt;div&gt;si falla usa LLM (a revisar segun datos)&lt;br&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="250" x="827" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-81" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div&gt;A decidir si hacemos embedding por criterio completo (1 por estudio)&lt;/div&gt;&lt;div&gt;O por cada condicion (Entre 5-15 por estudio)&lt;/div&gt;&lt;div&gt;Modelo general:&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;code class=&quot;bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]&quot; style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;BAAI/bge-small-en-v1.5&lt;/code&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; o &lt;/span&gt;&lt;code class=&quot;bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]&quot; style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;all-MiniLM-L6-v2&lt;/code&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Modelo Medico:&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;neuml/pubmedbert-base-embeddings&lt;/div&gt;" vertex="1">
+          <mxGeometry height="110" width="333" x="827" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="pos9xCRZskUfuNPnbi63-86" edge="1" parent="1" source="pos9xCRZskUfuNPnbi63-2" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.548;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=12;startSize=8;endSize=8;" target="pos9xCRZskUfuNPnbi63-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
