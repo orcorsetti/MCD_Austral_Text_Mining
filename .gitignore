@@ -7,3 +7,7 @@ utils/__pycache__/
 *.py[cod]
 .DS_Store
 Thumbs.db
+data/03_eligibility_parsed.parquet
+data/04_eligibility_parsed_llm.parquet
+data/05_clinical_trials_normalized.parquet
+data/04_eligibility_parsed_llm.xlsx
