@@ -12,3 +12,15 @@ data/04_eligibility_parsed_llm.parquet
 data/05_clinical_trials_normalized.parquet
 data/04_eligibility_parsed_llm.xlsx
 data/05_eligibility_normalized.parquet
+data/06_condition_embeddings_all-MiniLM-L6-v2.npy
+data/06_condition_embeddings_pritamdeka__S-PubMedBert-MS-MARCO.npy
+data/06_condition_embeddings.npy
+data/06_condition_meta.parquet
+data/06_exclusion_embeddings_all-MiniLM-L6-v2.npy
+data/06_exclusion_embeddings_neuml__pubmedbert-base-embeddings.npy
+data/06_exclusion_embeddings.npy
+data/06_exclusion_meta.parquet
+data/06_inclusion_embeddings_all-MiniLM-L6-v2.npy
+data/06_inclusion_embeddings_neuml__pubmedbert-base-embeddings.npy
+data/06_inclusion_embeddings.npy
+data/06_inclusion_meta.parquet
