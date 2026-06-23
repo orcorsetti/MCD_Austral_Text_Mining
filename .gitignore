@@ -1,8 +1,16 @@
 data/clinical_trials.parquet
+data/05_trial_metadata.parquet
+data/*.zip
 data/.cache
 utils/__pycache__/
+__pycache__/
 .claude/settings.local.json
+memory/
 .env
+
+# Frontend (belt-and-suspenders; frontend/.gitignore also covers these)
+frontend/node_modules/
+frontend/dist/
 .ipynb_checkpoints/
 *.py[cod]
 .DS_Store
