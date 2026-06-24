@@ -7,13 +7,10 @@ import {
   DIAGNOSIS_GROUPS,
   DISEASE_SETTINGS,
   ECOG_OPTIONS,
-  HER2_OPTIONS,
-  HR_OPTIONS,
   INTERVENTION_TYPES,
-  MSI_OPTIONS,
-  PDL1_OPTIONS,
   PRIOR_LINES_OPTIONS,
   SEX_OPTIONS,
+  STUDY_TYPES,
   TREATMENT_CLASSES,
   TREATMENT_SETTINGS,
   TRIAL_PHASES,
@@ -111,6 +108,13 @@ export function Sidebar({ profile, onProfileChange, onSearch, onReset }: Sidebar
               placeholder="Select..."
             />
           </div>
+          <SelectField
+            label="Study type"
+            value={profile.studyType}
+            onChange={v => set('studyType', v)}
+            options={STUDY_TYPES}
+            placeholder="Any"
+          />
         </FormSection>
 
         <FormSection label="Molecular profile">
@@ -120,36 +124,6 @@ export function Sidebar({ profile, onProfileChange, onSearch, onReset }: Sidebar
               onChange={v => set('biomarkers', v)}
             />
           </Field>
-          <div className="field-grid-2">
-            <SelectField
-              label="HER2 status"
-              value={profile.her2Status}
-              onChange={v => set('her2Status', v)}
-              options={HER2_OPTIONS}
-              placeholder="Unknown / N/A"
-            />
-            <SelectField
-              label="HR status"
-              value={profile.hrStatus}
-              onChange={v => set('hrStatus', v)}
-              options={HR_OPTIONS}
-              placeholder="Unknown / N/A"
-            />
-            <SelectField
-              label="MSI / MMR status"
-              value={profile.msiStatus}
-              onChange={v => set('msiStatus', v)}
-              options={MSI_OPTIONS}
-              placeholder="Unknown / N/A"
-            />
-            <SelectField
-              label="PD-L1 expression"
-              value={profile.pdl1Status}
-              onChange={v => set('pdl1Status', v)}
-              options={PDL1_OPTIONS}
-              placeholder="Unknown / N/A"
-            />
-          </div>
         </FormSection>
 
         <FormSection label="Performance status">

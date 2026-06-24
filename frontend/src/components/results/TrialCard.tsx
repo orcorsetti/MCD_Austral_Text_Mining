@@ -56,6 +56,15 @@ export function TrialCard({ trial, profile }: TrialCardProps) {
             {trial.localSiteCount > 0 && ` · ${trial.localSiteCount} in ${country}`}
           </span>
         )}
+        {trial.siteCount > 0 && trial.localSiteCount === 0 && (
+          <span
+            className="badge"
+            style={{ background: 'rgba(217,119,6,0.12)', color: '#b45309', border: '1px solid rgba(217,119,6,0.3)' }}
+          >
+            🌐 No sites in {country || 'your country'}
+            {trial.siteCountries?.length ? ` · ${trial.siteCountries.slice(0, 3).join(', ')}` : ''}
+          </span>
+        )}
       </div>
 
       <div className="score-bar-wrap">

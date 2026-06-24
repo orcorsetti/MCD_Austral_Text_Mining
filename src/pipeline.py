@@ -25,6 +25,7 @@ CONDITION_MODEL_NAME = 'BAAI/bge-small-en-v1.5'            # 384 dims -> condici
 
 CONDITION_TOP_N      = 200  # candidatos tras el filtro semantico de condicion
 INCLUSION_TOP_K      = 3    # criterios promediados por estudio (score bi-encoder)
+MIN_INCLUSION_CRITERIA = 3  # descarta estudios muy genericos (pocos criterios de inclusion)
 RERANK_POOL          = 50   # estudios que pasan al cross-encoder
 RESULT_TOP_N         = 10   # estudios devueltos
 EXPLAIN_INCLUSION_K  = 3    # criterios de inclusion citados al LLM
@@ -62,6 +63,10 @@ class TrialMatcherEngine:
 
         self.condition_text = dict(zip(self.condition_meta['nct_id'], self.condition_meta['condition_text']))
 
+        # Estudios con suficientes criterios de inclusion (descarta los muy genericos).
+        inc_counts = self.inclusion_meta.groupby('nct_id').size()
+        self.studies_min_criteria = set(inc_counts[inc_counts >= MIN_INCLUSION_CRITERIA].index)
+
         self.criteria_model  = EmbeddingModel(CRITERIA_MODEL_NAME)
         self.condition_model = EmbeddingModel(CONDITION_MODEL_NAME)
         self.reranker        = CrossEncoderReranker()
@@ -76,7 +81,7 @@ class TrialMatcherEngine:
         cond_q = self.condition_model.encode([build_condition_query(patient)])[0]
         crit_q = self.criteria_model.encode([build_criteria_query(patient)])[0]
 
-        eligible_ids  = filter_studies(self.clinical_df, patient.age)
+        eligible_ids  = filter_studies(self.clinical_df, patient.age) & self.studies_min_criteria
         candidate_ids = condition_candidates(
             cond_q, self.condition_meta, self.condition_emb, eligible_ids, CONDITION_TOP_N
         )
@@ -85,26 +90,33 @@ class TrialMatcherEngine:
         exclusion_scores = score_criteria(crit_q, self.exclusion_meta, self.exclusion_emb, candidate_ids, INCLUSION_TOP_K)
 
         shortlist_ids = composite_score(inclusion_scores, exclusion_scores, candidate_ids).head(RERANK_POOL)['nct_id'].tolist()
-        ranked = self._rerank(shortlist_ids, build_rerank_query(patient), crit_q, patient.country)
+        ranked = self._rerank(shortlist_ids, build_rerank_query(patient), crit_q, patient.country, exclusion_scores)
 
         # La explicacion LLM se genera por separado (POST /api/explain) para no bloquear la busqueda.
         trials = [self._to_trial_match(row, patient.country) for _, row in ranked.iterrows()]
         return {'totalCount': len(eligible_ids), 'trials': trials}
 
     def _rerank_doc(self, nct_id: str, crit_q: np.ndarray) -> str:
-        """Documento del estudio para el cross-encoder: condicion + top criterios de inclusion."""
+        """Documento del estudio para el cross-encoder: titulo + condicion + top criterios de inclusion."""
+        title = self.metadata_df.loc[nct_id, 'brief_title'] or ''
         inc = top_criteria(crit_q, self.inclusion_meta, self.inclusion_emb, nct_id, EXPLAIN_INCLUSION_K)
-        return f"{self.condition_text.get(nct_id, '')} {' '.join(inc)}"[:1500]
+        return f"{title}. {self.condition_text.get(nct_id, '')} {' '.join(inc)}"[:1500]
 
-    def _rerank(self, shortlist_ids: list, rerank_query: str, crit_q: np.ndarray, country: str) -> pd.DataFrame:
-        """Cross-encoder biomedico (Score General) + score geografico -> composite ponderado."""
+    def _rerank(self, shortlist_ids: list, rerank_query: str, crit_q: np.ndarray,
+                country: str, exclusion_scores: dict) -> pd.DataFrame:
+        """Cross-encoder (Score General) + geo + 'pasa exclusiones' -> composite ponderado."""
         logits = self.reranker.score([(rerank_query, self._rerank_doc(n, crit_q)) for n in shortlist_ids])
-        general = _minmax(logits)  # normaliza el Score General del shortlist a 0-1
+        general = _minmax(logits)  # Score General normalizado a 0-1 dentro del shortlist
+        # exclusion_pass: 1.0 si el paciente es el MENOS parecido a las exclusiones (no se excluye).
+        exclusion_pass = [1.0 - e for e in _minmax([exclusion_scores.get(n, 0.0) for n in shortlist_ids])]
 
         rows = []
-        for nct_id, gen in zip(shortlist_ids, general):
+        for nct_id, gen, exc_pass in zip(shortlist_ids, general, exclusion_pass):
             geo = geo_score(list(self.metadata_df.loc[nct_id, 'location_countries']), country)
-            rows.append({'nct_id': nct_id, 'reranker_score': gen, 'geo_score': geo, 'final_score': final_score(gen, geo)})
+            rows.append({
+                'nct_id': nct_id, 'reranker_score': gen, 'geo_score': geo,
+                'exclusion_pass': exc_pass, 'final_score': final_score(gen, geo, exc_pass),
+            })
         return (
             pd.DataFrame(rows)
             .sort_values('final_score', ascending=False)
@@ -148,6 +160,7 @@ class TrialMatcherEngine:
             'sponsor':           '—',                                    # no descargado offline
             'siteCount':         len(countries),
             'localSiteCount':    sum(c == country for c in countries),
+            'siteCountries':     list(dict.fromkeys(countries))[:5],   # paises unicos (para el flag)
             'matchScore':        score,
             'confidence':        confidence_for(score),
             'url':               f'https://clinicaltrials.gov/study/{nct_id}',

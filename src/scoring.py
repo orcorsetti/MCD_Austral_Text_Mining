@@ -5,9 +5,10 @@ import pandas as pd
 W_INCLUSION = 1.0
 W_EXCLUSION = 0.5
 
-# Score final compuesto: w1 * reranker (Score General) + w2 * geo.
-W_RERANK = 0.8
+# Score final compuesto: reranker (Score General) + geo + "pasa exclusiones".
+W_RERANK = 0.6
 W_GEO    = 0.2
+W_EXCL   = 0.2  # premia que el paciente NO matchee criterios de exclusion
 
 
 def composite_score(
@@ -42,9 +43,9 @@ def geo_score(countries: list, patient_country: str) -> float:
     return 0.3 if countries else 0.0     # recluta, pero no en su pais
 
 
-def final_score(reranker: float, geo: float) -> float:
-    """Combina Score General (reranker) y Score Geografico en el score final."""
-    return W_RERANK * reranker + W_GEO * geo
+def final_score(reranker: float, geo: float, exclusion_pass: float) -> float:
+    """Combina Score General (reranker), geo y 'pasa exclusiones' (0-1) en el score final."""
+    return W_RERANK * reranker + W_GEO * geo + W_EXCL * exclusion_pass
 
 
 def confidence_for(score: float) -> str:

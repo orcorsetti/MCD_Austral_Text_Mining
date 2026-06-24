@@ -24,8 +24,7 @@ export const DIAGNOSIS_GROUPS: DiagnosisGroup[] = [
   {
     label: 'Thoracic',
     options: [
-      'NSCLC – adenocarcinoma',
-      'NSCLC – squamous',
+      'NSCLC',
       'Small cell lung cancer (SCLC)',
       'Mesothelioma',
     ],
@@ -87,25 +86,21 @@ export const DIAGNOSIS_GROUPS: DiagnosisGroup[] = [
 
 export const DISEASE_SETTINGS = ['Localized', 'Locally advanced', 'Metastatic / advanced'];
 
+// Tipo de estudio / propósito. Por ahora solo es campo de formulario (no filtra todavía).
+export const STUDY_TYPES = [
+  'Treatment',
+  'Diagnostic',
+  'Palliative / supportive care',
+  'Rehabilitation',
+  'Chemotherapy',
+  'Surgery',
+  'Prevention',
+  'Screening',
+  'Other',
+];
+
 export const BIOMARKER_HINT =
   'EGFR · ALK · KRAS G12C · BRCA1/2 · HER2 · PD-L1 · MSI-H · BRAF V600E · PIK3CA · NTRK · RET';
-
-export const HER2_OPTIONS = [
-  'HER2+ (IHC 3+ or ISH+)',
-  'HER2-low (IHC 1+ or 2+/ISH–)',
-  'HER2– (IHC 0)',
-  'HER2-ultralow',
-];
-
-export const HR_OPTIONS = ['ER+ / PR+', 'ER+ / PR–', 'ER– / PR–'];
-
-export const MSI_OPTIONS = ['MSI-H / dMMR', 'MSS / pMMR'];
-
-export const PDL1_OPTIONS = [
-  'Negative (CPS <1)',
-  'Low (CPS 1–9)',
-  'High (CPS ≥10 / TPS ≥50%)',
-];
 
 export interface EcogOption {
   value: string;

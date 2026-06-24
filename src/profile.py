@@ -1,10 +1,6 @@
 """Perfil del paciente y adaptacion desde el formulario del frontend (PatientProfile)."""
 from dataclasses import dataclass, field
 
-# Campos de estado molecular del formulario que se pliegan a biomarcadores.
-MOLECULAR_FIELDS = ['her2Status', 'hrStatus', 'msiStatus', 'pdl1Status']
-
-
 @dataclass
 class Patient:
     """Perfil clinico del paciente para el matching (espeja el formulario del frontend)."""
@@ -25,7 +21,6 @@ class Patient:
 
 def patient_from_profile(profile: dict) -> Patient:
     """Adapta el PatientProfile del frontend al Patient del pipeline."""
-    molecular = [profile.get(f, '') for f in MOLECULAR_FIELDS]
     age_raw = str(profile.get('age', '')).strip()
     return Patient(
         age=int(age_raw) if age_raw.isdigit() else 0,
@@ -33,7 +28,7 @@ def patient_from_profile(profile: dict) -> Patient:
         diagnosis=profile.get('diagnosis', ''),
         histology=profile.get('histology', ''),
         setting=profile.get('diseaseSetting', ''),
-        biomarkers=profile.get('biomarkers', []) + [m for m in molecular if m],
+        biomarkers=profile.get('biomarkers', []),
         ecog=profile.get('ecog') or '',
         comorbidities=profile.get('comorbidities', []),
         tx_setting=profile.get('treatmentSetting', ''),

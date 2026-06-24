@@ -8,12 +8,9 @@ export interface PatientProfile {
   diagnosis: string;
   histology: string;
   diseaseSetting: string;
+  studyType: string;
   // Molecular profile
   biomarkers: string[];
-  her2Status: string;
-  hrStatus: string;
-  msiStatus: string;
-  pdl1Status: string;
   // Performance status
   ecog: string | null;
   comorbidities: string[];
@@ -35,11 +32,8 @@ export const EMPTY_PROFILE: PatientProfile = {
   diagnosis: '',
   histology: '',
   diseaseSetting: '',
+  studyType: '',
   biomarkers: [],
-  her2Status: '',
-  hrStatus: '',
-  msiStatus: '',
-  pdl1Status: '',
   ecog: null,
   comorbidities: [],
   treatmentSetting: '',
@@ -65,6 +59,8 @@ export interface TrialMatch {
   siteCount: number;
   /** Sites located in the patient's country. */
   localSiteCount: number;
+  /** Distinct countries with sites (for the "no local sites" flag). */
+  siteCountries?: string[];
   /** 0–1 relevance score for this patient profile. */
   matchScore: number;
   confidence: MatchConfidence;

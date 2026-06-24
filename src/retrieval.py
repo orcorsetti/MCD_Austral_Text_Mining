@@ -2,7 +2,8 @@
 import numpy as np
 import pandas as pd
 
-RECRUITING_STATUS = 'RECRUITING'
+# Estados de reclutamiento que se consideran "abiertos" para el matching.
+ACTIVE_STATUSES = {'RECRUITING', 'NOT_YET_RECRUITING'}
 
 
 def parse_min_age(min_age) -> int:
@@ -22,10 +23,10 @@ def age_bucket(age: int) -> str:
 
 
 def filter_studies(clinical_df: pd.DataFrame, age: int) -> set:
-    """nct_ids con status RECRUITING y edad compatible (min_age + bucket std_ages)."""
+    """nct_ids con status abierto (recruiting / not yet) y edad compatible."""
     bucket = age_bucket(age)
     eligible = clinical_df[
-        (clinical_df['overall_status'] == RECRUITING_STATUS)
+        (clinical_df['overall_status'].isin(ACTIVE_STATUSES))
         & (clinical_df['min_age'].map(parse_min_age) <= age)
         & (clinical_df['std_ages'].map(lambda b: b is None or bucket in b))
     ]
