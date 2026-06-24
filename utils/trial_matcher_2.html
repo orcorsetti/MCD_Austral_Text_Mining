@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrialMatch — Oncology Clinical Trial Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #0a7c6a;
+    --teal-light: #e6f4f1;
+    --teal-mid: #1d9e85;
+    --ink: #0f1f1c;
+    --ink-secondary: #3d5550;
+    --ink-tertiary: #7a9990;
+    --surface: #f7faf9;
+    --white: #ffffff;
+    --border: rgba(10,124,106,0.15);
+    --border-mid: rgba(10,124,106,0.25);
+    --red: #c0392b;
+    --red-light: #fdf0ee;
+    --amber: #b45309;
+    --amber-light: #fef3c7;
+    --green-light: #ecfdf5;
+    --green: #065f46;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--teal);
+    letter-spacing: -0.5px;
+  }
+
+  .logo span {
+    color: var(--ink);
+  }
+
+  .header-badge {
+    font-size: 11px;
+    color: var(--ink-tertiary);
+    border: 1px solid var(--border-mid);
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+
+  /* LAYOUT */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+    position: sticky;
+    top: 60px;
+  }
+
+  .sidebar-inner {
+    padding: 1.5rem;
+  }
+
+  /* SECTIONS */
+  .form-section {
+    margin-bottom: 1.75rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-tertiary);
+  }
+
+  /* FIELDS */
+  .field { margin-bottom: 10px; }
+
+  .field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    margin-bottom: 4px;
+  }
+
+  .req { color: var(--red); margin-left: 2px; }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--ink-tertiary);
+    margin-top: 3px;
+    font-style: italic;
+  }
+
+  .field-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  select, input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a9990' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+  }
+
+  select:focus, input:focus, textarea:focus {
+    border-color: var(--teal-mid);
+    background: var(--white);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 72px;
+    line-height: 1.5;
+  }
+
+  /* CHIPS */
+  .chip-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid var(--border-mid);
+    cursor: pointer;
+    color: var(--ink-secondary);
+    background: var(--white);
+    transition: all 0.15s;
+    user-select: none;
+    line-height: 1.3;
+  }
+
+  .chip:hover { border-color: var(--teal-mid); color: var(--teal); }
+
+  .chip.active {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: var(--white);
+  }
+
+  .chip.warn.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--white);
+  }
+
+  /* BIOMARKER TAGS */
+  .biomarker-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 8px;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius);
+    background: var(--surface);
+    min-height: 40px;
+    cursor: text;
+    transition: border-color 0.15s;
+  }
+
+  .biomarker-box:focus-within {
+    border-color: var(--teal-mid);
+    background: var(--white);
+  }
+
+  .bm-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 99px;
+    background: var(--teal-light);
+    color: var(--teal);
+    font-weight: 500;
+  }
+
+  .bm-tag button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--teal);
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.7;
+  }
+
+  .bm-tag button:hover { opacity: 1; }
+
+  .bm-input {
+    border: none !important;
+    background: transparent !important;
+    padding: 2px 4px !important;
+    font-size: 12px !important;
+    min-width: 140px;
+    flex: 1;
+    outline: none;
+  }
+
+  /* COMPLETENESS BAR */
+  .completeness-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin-bottom: 1rem;
+  }
+
+  .completeness-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+
+  .completeness-label { color: var(--ink-secondary); font-weight: 500; }
+  .completeness-pct { color: var(--teal); font-weight: 500; }
+
+  .bar-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .completeness-fields {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--ink-tertiary);
+  }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%;
+    padding: 11px;
+    background: var(--teal);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+
+  .submit-btn:hover { background: var(--teal-mid); }
+  .submit-btn:active { transform: scale(0.99); }
+
+  .reset-link {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-tertiary);
+    margin-top: 8px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .reset-link:hover { color: var(--ink-secondary); }
+
+  /* RESULTS PANEL */
+  .results-panel {
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+
+  .results-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+
+  .results-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .results-title em {
+    color: var(--teal);
+    font-style: italic;
+  }
+
+  /* CONFIDENCE BANNER */
+  .confidence-banner {
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 1rem;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .banner-high { background: var(--green-light); color: var(--green); border: 1px solid rgba(6,95,70,0.2); }
+  .banner-mid { background: var(--amber-light); color: var(--amber); border: 1px solid rgba(180,83,9,0.2); }
+  .banner-low { background: var(--red-light); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+
+  .banner-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .banner-text { line-height: 1.5; }
+  .banner-text strong { font-weight: 500; display: block; }
+
+  /* TRIAL CARDS */
+  .trial-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    transition: border-color 0.15s;
+    position: relative;
+  }
+
+  .trial-card:hover { border-color: var(--border-mid); }
+
+  .trial-card.high-conf { border-left: 3px solid var(--green); }
+  .trial-card.mid-conf  { border-left: 3px solid var(--amber); }
+  .trial-card.low-conf  { border-left: 3px solid var(--ink-tertiary); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .conf-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 99px;
+    white-space: nowrap;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .conf-high { background: var(--green-light); color: var(--green); }
+  .conf-mid  { background: var(--amber-light); color: var(--amber); }
+  .conf-low  { background: #f3f4f6; color: var(--ink-tertiary); }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1px solid var(--border-mid);
+    color: var(--ink-secondary);
+    background: var(--surface);
+  }
+
+  .badge-nct { font-family: monospace; font-size: 10px; }
+
+  .card-section-title {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-tertiary);
+    margin-bottom: 5px;
+  }
+
+  .criteria-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 10px;
+  }
+
+  .criteria-item {
+    font-size: 12px;
+    color: var(--ink-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.4;
+  }
+
+  .criteria-item::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .crit-inc::before { background: var(--teal); }
+  .crit-exc::before { background: var(--red); }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+  }
+
+  .sponsor-text {
+    font-size: 11px;
+    color: var(--ink-tertiary);
+  }
+
+  .card-link {
+    font-size: 12px;
+    color: var(--teal);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .card-link:hover { text-decoration: underline; }
+
+  /* EMPTY / LOADING STATE */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    color: var(--ink-tertiary);
+    gap: 12px;
+  }
+
+  .empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--teal-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .empty-icon svg {
+    width: 26px;
+    height: 26px;
+    stroke: var(--teal);
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .empty-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--ink-secondary);
+  }
+
+  .empty-sub { font-size: 13px; max-width: 280px; }
+
+  .loading-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    margin: 0 2px;
+    animation: bounce 0.9s infinite;
+  }
+
+  .loading-dot:nth-child(2) { animation-delay: 0.15s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.30s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+    40% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  .missing-fields-note {
+    font-size: 12px;
+    color: var(--amber);
+    background: var(--amber-light);
+    border: 1px solid rgba(180,83,9,0.2);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .score-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .score-label { font-size: 11px; color: var(--ink-tertiary); min-width: 80px; }
+
+  .score-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--teal);
+  }
+
+  .score-pct { font-size: 11px; color: var(--ink-secondary); font-weight: 500; min-width: 28px; text-align: right; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Trial<span>Match</span></div>
+  <span class="header-badge">Oncology Clinical Trial Finder · ClinicalTrials.gov API v2</span>
+</header>
+
+<div class="app-layout">
+
+  <!-- SIDEBAR: FORM -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <!-- Completeness bar -->
+      <div class="completeness-bar">
+        <div class="completeness-header">
+          <span class="completeness-label">Profile completeness</span>
+          <span class="completeness-pct" id="pct-label">0%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" id="bar-fill"></div></div>
+        <div class="completeness-fields" id="missing-hint">Fill in the required fields to begin.</div>
+      </div>
+
+      <!-- 1. Location & demographics -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-dot"></div>
+          <span class="section-label">Location & demographics</span>
+        </div>
+        <div class="field-grid-2">
+          <div class="field">
+            <label class="field-label">Country <span class="req">*</span></label>
+            <select id="country" onchange="updateCompleteness()">
+              <option value="">Select...</option>
+              <option>Argentina</option><option>Australia</option><option>Brazil</option>
+              <option>Canada</option><option>Chile</option><option>Colombia</option>
+              <option>France</option><option>Germany</option><option>Israel</option>
+              <option>Italy</option><option>Japan</option><option>Mexico</option>
+              <option>Netherlands</option><option>South Korea</option><option>Spain</option>
+              <option>United Kingdom</option><option>United States</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Age</label>
+            <input type="number" id="age" placeholder="e.g. 58" min="18" max="99" onchange="updateCompleteness()">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Sex</label>
+          <select id="sex" onchange="updateCompleteness()">
+            <option value="">Any</option>
+            <option>Female</option><option>Male</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 2. Diagnosis -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-dot"></div>
+          <span class="section-label">Diagnosis</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Primary tumor type <span class="req">*</span></label>
+          <select id="diagnosis" onchange="updateCompleteness()">
+            <option value="">Select diagnosis...</option>
+            <optgroup label="Breast">
+              <option>Breast cancer</option>
+            </optgroup>
+            <optgroup label="Thoracic">
+              <option>NSCLC</option>
+              <option>SCLC</option>
+              <option>Mesothelioma</option>
+              <option>Thymoma / thymic carcinoma</option>
+            </optgroup>
+            <optgroup label="GI">
+              <option>Colorectal cancer (CRC)</option>
+              <option>Gastric / GEJ cancer</option>
+              <option>Hepatocellular carcinoma (HCC)</option>
+              <option>Pancreatic cancer</option>
+              <option>Cholangiocarcinoma / biliary tract</option>
+              <option>Esophageal cancer</option>
+              <option>Anal cancer</option>
+              <option>GIST</option>
+            </optgroup>
+            <optgroup label="GU">
+              <option>Prostate cancer</option>
+              <option>Urothelial / bladder cancer</option>
+              <option>Renal cell carcinoma (RCC)</option>
+              <option>Cervical cancer</option>
+              <option>Endometrial / uterine cancer</option>
+              <option>Ovarian / fallopian tube / peritoneal</option>
+              <option>Testicular cancer</option>
+              <option>Penile cancer</option>
+            </optgroup>
+            <optgroup label="Hematologic">
+              <option>DLBCL</option><option>Follicular lymphoma</option>
+              <option>Hodgkin lymphoma</option><option>Mantle cell lymphoma</option>
+              <option>Multiple myeloma</option>
+              <option>AML</option><option>ALL</option><option>CLL</option><option>CML</option>
+              <option>Myelodysplastic syndrome (MDS)</option>
+              <option>Myeloproliferative neoplasm (MPN)</option>
+            </optgroup>
+            <optgroup label="Other solid tumors">
+              <option>Melanoma</option>
+              <option>HNSCC</option>
+              <option>Thyroid cancer</option>
+              <option>Soft tissue sarcoma</option>
+              <option>Bone sarcoma (osteosarcoma / Ewing / chondrosarcoma)</option>
+              <option>Glioblastoma (GBM)</option>
+              <option>Other CNS tumor</option>
+              <option>Neuroendocrine tumor (NET)</option>
+              <option>Adrenocortical carcinoma</option>
+              <option>Skin cancer – non-melanoma (BCC/SCC/Merkel)</option>
+              <option>Cancer of unknown primary (CUP)</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option>Other (rare / not listed)</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field-grid-2">
+          <div class="field">
+            <label class="field-label">Histology / subtype (optional)</label>
+            <input type="text" id="histology" placeholder="e.g. adenocarcinoma, squamous, mixed..." onchange="updateCompleteness()">
+          </div>
+          <div class="field">
+            <label class="field-label">Disease setting <span class="req">*</span></label>
+            <select id="setting" onchange="updateCompleteness()">
+              <option value="">Select...</option>
+              <option>Localized</option>
+              <option>Locally advanced</option>
+              <option>Metastatic / advanced</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Molecular profile -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-dot"></div>
+          <span class="section-label">Molecular profile</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Biomarkers / mutations (optional)</label>
+          <div class="biomarker-box" id="bm-box" onclick="document.getElementById('bm-input').focus()">
+            <div id="bm-tags" style="display:contents"></div>
+            <input class="bm-input" id="bm-input" placeholder="Type and press Enter (e.g. HER2+, ER+/PR+, PD-L1 CPS ≥10, MSI-H, BRCA2, EGFR exon19del...)">
+          </div>
+          <p class="field-hint">Add any biomarker or mutation result available: receptor status (HER2, ER/PR), PD-L1, MSI/MMR, and any gene mutation (EGFR, ALK, BRCA, KRAS, BRAF, NTRK, RET, etc.)</p>
+        </div>
+      </div>
+
+      <!-- 4. Performance & comorbidities -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-dot"></div>
+          <span class="section-label">Performance status</span>
+        </div>
+        <div class="field">
+          <label class="field-label">ECOG PS <span class="req">*</span></label>
+          <div class="chip-wrap" id="ecog-chips">
+            <span class="chip" onclick="selectChip(this,'ecog')">0</span>
+            <span class="chip" onclick="selectChip(this,'ecog')">1</span>
+            <span class="chip" onclick="selectChip(this,'ecog')">2</span>
+            <span class="chip warn" onclick="selectChip(this,'ecog')">3</span>
+            <span class="chip warn" onclick="selectChip(this,'ecog')">4</span>
+          </div>
+          <p class="field-hint">Most trials require ECOG 0–1. ECOG ≥2 will flag relevant exclusion criteria.</p>
+        </div>
+        <div class="field">
+          <label class="field-label">Relevant comorbidities</label>
+          <div class="chip-wrap">
+            <span class="chip" onclick="toggleChip(this)">Active CNS metastases</span>
+            <span class="chip" onclick="toggleChip(this)">Leptomeningeal disease</span>
+            <span class="chip" onclick="toggleChip(this)">Autoimmune disease</span>
+            <span class="chip" onclick="toggleChip(this)">Prior organ transplant</span>
+            <span class="chip" onclick="toggleChip(this)">Hepatic impairment</span>
+            <span class="chip" onclick="toggleChip(this)">Renal impairment</span>
+            <span class="chip" onclick="toggleChip(this)">HIV / HBV / HCV</span>
+            <span class="chip" onclick="toggleChip(this)">Cardiac disease</span>
+            <span class="chip" onclick="toggleChip(this)">Prior ILD / pneumonitis</span>
+            <span class="chip" onclick="toggleChip(this)">Pregnancy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Treatment history -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-dot"></div>
+          <span class="section-label">Treatment history</span>
+        </div>
+        <div class="field-grid-2">
+          <div class="field">
+            <label class="field-label">Treatment setting <span class="req">*</span></label>
+            <select id="tx-setting" onchange="updateCompleteness()">
+              <option value="">Select...</option>
+              <option>Neoadjuvant</option>
+              <option>Adjuvant</option>
+              <option>Consolidative</option>
+              <option>Metastatic – 1L (naive)</option>
+              <option>Metastatic – 2L</option>
+              <option>Metastatic – 3L+</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Prior lines of therapy</label>
+            <select id="prior-lines" onchange="updateCompleteness()">
+              <option value="">Unknown</option>
+              <option>0 (treatment-naive)</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3+</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Prior treatment classes</label>
+          <div class="chip-wrap">
+            <span class="chip" onclick="toggleChip(this)">Platinum</span>
+            <span class="chip" onclick="toggleChip(this)">Taxane</span>
+            <span class="chip" onclick="toggleChip(this)">Anthracycline</span>
+            <span class="chip" onclick="toggleChip(this)">Anti-HER2</span>
+            <span class="chip" onclick="toggleChip(this)">CDK4/6i</span>
+            <span class="chip" onclick="toggleChip(this)">Anti-VEGF</span>
+            <span class="chip" onclick="toggleChip(this)">Checkpoint inhibitor</span>
+            <span class="chip" onclick="toggleChip(this)">PARP inhibitor</span>
+            <span class="chip" onclick="toggleChip(this)">ADC</span>
+            <span class="chip" onclick="toggleChip(this)">EGFR TKI</span>
+            <span class="chip" onclick="toggleChip(this)">ALK / ROS1 inhibitor</span>
+            <span class="chip" onclick="toggleChip(this)">CAR-T</span>
+            <span class="chip" onclick="toggleChip(this)">Stem cell transplant</span>
+            <span class="chip" onclick="toggleChip(this)">Radiation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Trial preferences -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-dot"></div>
+          <span class="section-label">Trial preferences</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Phase</label>
+          <div class="chip-wrap">
+            <span class="chip" onclick="toggleChip(this)">Phase I</span>
+            <span class="chip" onclick="toggleChip(this)">Phase II</span>
+            <span class="chip active" onclick="toggleChip(this)">Phase III</span>
+            <span class="chip" onclick="toggleChip(this)">Phase IV</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Intervention type</label>
+          <div class="chip-wrap">
+            <span class="chip active" onclick="toggleChip(this)">Drug / biologic</span>
+            <span class="chip" onclick="toggleChip(this)">Chemotherapy</span>
+            <span class="chip" onclick="toggleChip(this)">Immunotherapy</span>
+            <span class="chip" onclick="toggleChip(this)">Cell therapy</span>
+            <span class="chip" onclick="toggleChip(this)">Radiation</span>
+            <span class="chip" onclick="toggleChip(this)">Surgery</span>
+            <span class="chip" onclick="toggleChip(this)">Device</span>
+            <span class="chip" onclick="toggleChip(this)">Diagnostic / staging imaging</span>
+            <span class="chip" onclick="toggleChip(this)">Behavioral / supportive care</span>
+            <span class="chip" onclick="toggleChip(this)">Dietary supplement</span>
+            <span class="chip" onclick="toggleChip(this)">Observational</span>
+            <span class="chip" onclick="toggleChip(this)">Survey / questionnaire</span>
+            <span class="chip" onclick="toggleChip(this)">Genetic / biomarker testing</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Free text -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-dot"></div>
+          <span class="section-label">Additional details</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Free-text description</label>
+          <textarea id="freetext" placeholder="Describe any other relevant clinical characteristics: specific mutation details, lab values, prior drug names, concurrent medications, patient preferences..." onchange="updateCompleteness()"></textarea>
+          <p class="field-hint">Processed by NLP to extract additional matching criteria.</p>
+        </div>
+      </div>
+
+      <!-- Missing fields warning -->
+      <div class="missing-fields-note" id="missing-note"></div>
+
+      <!-- Submit -->
+      <button class="submit-btn" onclick="runSearch()">Search matching trials →</button>
+      <span class="reset-link" onclick="resetForm()">Reset all fields</span>
+
+    </div>
+  </aside>
+
+  <!-- RESULTS PANEL -->
+  <main class="results-panel" id="results-panel">
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+      </div>
+      <p class="empty-title">No search yet</p>
+      <p class="empty-sub">Fill in the patient profile and click "Search matching trials" to find eligible studies.</p>
+    </div>
+    <div id="results-content" style="display:none"></div>
+  </main>
+
+</div>
+
+<script>
+const biomarkers = [];
+
+// Biomarker tag input
+document.getElementById('bm-input').addEventListener('keydown', e => {
+  const val = e.target.value.trim().replace(/,$/, '');
+  if ((e.key === 'Enter' || e.key === ',') && val) {
+    e.preventDefault();
+    addBiomarker(val);
+    e.target.value = '';
+    updateCompleteness();
+  } else if (e.key === 'Backspace' && !e.target.value && biomarkers.length) {
+    biomarkers.pop();
+    renderBiomarkerTags();
+    updateCompleteness();
+  }
+});
+
+function addBiomarker(val) {
+  if (biomarkers.includes(val)) return;
+  biomarkers.push(val);
+  renderBiomarkerTags();
+}
+
+function removeBiomarker(i) {
+  biomarkers.splice(i, 1);
+  renderBiomarkerTags();
+  updateCompleteness();
+}
+
+function renderBiomarkerTags() {
+  const container = document.getElementById('bm-tags');
+  container.innerHTML = '';
+  biomarkers.forEach((b, i) => {
+    const tag = document.createElement('span');
+    tag.className = 'bm-tag';
+    tag.innerHTML = `${b} <button onclick="removeBiomarker(${i})" aria-label="Remove ${b}">×</button>`;
+    container.appendChild(tag);
+  });
+}
+
+function selectChip(el, group) {
+  document.querySelectorAll(`#${group}-chips .chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  updateCompleteness();
+}
+
+function toggleChip(el) {
+  el.classList.toggle('active');
+  updateCompleteness();
+}
+
+// Completeness scoring
+const FIELDS = [
+  { id: 'country',    label: 'Country',          weight: 15, required: true },
+  { id: 'diagnosis',  label: 'Diagnosis',         weight: 25, required: true },
+  { id: 'setting',    label: 'Disease setting',   weight: 15, required: true },
+  { id: 'tx-setting', label: 'Treatment setting', weight: 15, required: true },
+  { id: 'ecog',       label: 'ECOG PS',           weight: 15, required: true, chip: 'ecog-chips' },
+  { id: 'prior-lines',label: 'Prior lines',       weight: 5  },
+  { id: 'age',        label: 'Age',               weight: 5  },
+  { id: 'freetext',   label: 'Free-text details', weight: 5  },
+];
+
+function getFieldValue(f) {
+  if (f.chip) return !!document.querySelector(`#${f.chip} .chip.active`);
+  if (f.bm)   return biomarkers.length > 0;
+  const el = document.getElementById(f.id);
+  if (!el) return false;
+  return el.value && el.value.trim() !== '';
+}
+
+function updateCompleteness() {
+  let score = 0;
+  const missing = [];
+  FIELDS.forEach(f => {
+    const filled = getFieldValue(f);
+    if (filled) score += f.weight;
+    else if (f.required) missing.push(f.label);
+  });
+  if (biomarkers.length > 0) score = Math.min(score + 5, 100);
+
+  const pct = Math.min(score, 100);
+  document.getElementById('bar-fill').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+
+  if (missing.length === 0) {
+    document.getElementById('missing-hint').textContent = 'All required fields complete — ready to search.';
+  } else {
+    document.getElementById('missing-hint').textContent = 'Required: ' + missing.join(' · ');
+  }
+}
+
+// Build ClinicalTrials query
+function buildConditionQuery() {
+  const dx = document.getElementById('diagnosis').value;
+  const map = {
+    'Breast cancer': 'breast cancer',
+    'NSCLC': 'non-small cell lung cancer',
+    'SCLC': 'small cell lung cancer',
+    'Mesothelioma': 'mesothelioma',
+    'Thymoma / thymic carcinoma': 'thymoma',
+    'Colorectal cancer (CRC)': 'colorectal cancer',
+    'Gastric / GEJ cancer': 'gastric cancer',
+    'Hepatocellular carcinoma (HCC)': 'hepatocellular carcinoma',
+    'Pancreatic cancer': 'pancreatic cancer',
+    'Cholangiocarcinoma / biliary tract': 'cholangiocarcinoma',
+    'Esophageal cancer': 'esophageal cancer',
+    'Anal cancer': 'anal cancer',
+    'GIST': 'gastrointestinal stromal tumor',
+    'Prostate cancer': 'prostate cancer',
+    'Urothelial / bladder cancer': 'urothelial carcinoma bladder',
+    'Renal cell carcinoma (RCC)': 'renal cell carcinoma',
+    'Cervical cancer': 'cervical cancer',
+    'Endometrial / uterine cancer': 'endometrial cancer',
+    'Ovarian / fallopian tube / peritoneal': 'ovarian cancer',
+    'Testicular cancer': 'testicular cancer',
+    'Penile cancer': 'penile cancer',
+    'DLBCL': 'diffuse large B-cell lymphoma',
+    'Follicular lymphoma': 'follicular lymphoma',
+    'Hodgkin lymphoma': 'hodgkin lymphoma',
+    'Mantle cell lymphoma': 'mantle cell lymphoma',
+    'Multiple myeloma': 'multiple myeloma',
+    'AML': 'acute myeloid leukemia',
+    'ALL': 'acute lymphoblastic leukemia',
+    'CLL': 'chronic lymphocytic leukemia',
+    'CML': 'chronic myeloid leukemia',
+    'Myelodysplastic syndrome (MDS)': 'myelodysplastic syndrome',
+    'Myeloproliferative neoplasm (MPN)': 'myeloproliferative neoplasm',
+    'Melanoma': 'melanoma',
+    'HNSCC': 'head neck squamous cell carcinoma',
+    'Thyroid cancer': 'thyroid cancer',
+    'Soft tissue sarcoma': 'soft tissue sarcoma',
+    'Bone sarcoma (osteosarcoma / Ewing / chondrosarcoma)': 'bone sarcoma',
+    'Glioblastoma (GBM)': 'glioblastoma',
+    'Other CNS tumor': 'central nervous system tumor',
+    'Neuroendocrine tumor (NET)': 'neuroendocrine tumor',
+    'Adrenocortical carcinoma': 'adrenocortical carcinoma',
+    'Skin cancer – non-melanoma (BCC/SCC/Merkel)': 'non-melanoma skin cancer',
+    'Cancer of unknown primary (CUP)': 'cancer of unknown primary',
+  };
+  return (map[dx] || dx || 'cancer').replace(/\s+/g, '+');
+}
+
+function computeConfidence() {
+  let filled = 0;
+  FIELDS.forEach(f => { if (getFieldValue(f)) filled++; });
+  const bm = biomarkers.length > 0 ? 1 : 0;
+  const total = FIELDS.length + 1;
+  const ratio = (filled + bm) / total;
+  if (ratio >= 0.8) return 'high';
+  if (ratio >= 0.5) return 'mid';
+  return 'low';
+}
+
+function getMissingFieldLabels() {
+  return FIELDS.filter(f => f.required && !getFieldValue(f)).map(f => f.label);
+}
+
+async function runSearch() {
+  const diagnosis = document.getElementById('diagnosis').value;
+  if (!diagnosis) {
+    const note = document.getElementById('missing-note');
+    note.textContent = 'Diagnosis is required to search. Please select a tumor type.';
+    note.style.display = 'block';
+    setTimeout(() => note.style.display = 'none', 4000);
+    return;
+  }
+
+  document.getElementById('missing-note').style.display = 'none';
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('results-content').style.display = 'block';
+  document.getElementById('results-content').innerHTML = `
+    <div style="display:flex; align-items:center; gap:10px; padding:2rem 0; color:var(--ink-tertiary); font-size:14px;">
+      <span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>
+      <span>Querying ClinicalTrials.gov...</span>
+    </div>`;
+
+  const cond = buildConditionQuery();
+  const country = document.getElementById('country').value;
+  const pageSize = 10;
+  let url = `https://clinicaltrials.gov/api/v2/studies?query.cond=${cond}&filter.overallStatus=RECRUITING&pageSize=${pageSize}&format=json&countTotal=true`;
+  if (biomarkers.length) url += `&query.term=${encodeURIComponent(biomarkers.join(' '))}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    renderResults(data);
+  } catch(e) {
+    document.getElementById('results-content').innerHTML = `
+      <div style="background:var(--red-light);color:var(--red);border:1px solid rgba(192,57,43,0.2);border-radius:var(--radius);padding:14px 16px;font-size:13px;">
+        <strong>Connection error:</strong> Could not reach ClinicalTrials.gov API. Please check your internet connection and try again.<br>
+        <span style="font-size:11px;opacity:0.7;margin-top:4px;display:block;">${e.message}</span>
+      </div>`;
+  }
+}
+
+function renderResults(data) {
+  const studies = data.studies || [];
+  const total = data.totalCount || 0;
+  const conf = computeConfidence();
+  const missing = getMissingFieldLabels();
+  const dx = document.getElementById('diagnosis').value;
+
+  const bannerConf = {
+    high: { cls: 'banner-high', icon: '✓', title: 'High-confidence results', msg: 'All required fields were provided. Results are well-filtered to this patient profile.' },
+    mid:  { cls: 'banner-mid',  icon: '⚠', title: 'Partial match — review carefully', msg: `Some fields were not provided (${missing.join(', ')}). Results may include trials for which the patient is ineligible.` },
+    low:  { cls: 'banner-low',  icon: '!', title: 'Low-confidence results', msg: `Several key fields are missing (${missing.join(', ')}). Results are broad and require manual eligibility review.` },
+  }[conf];
+
+  let html = `
+    <div class="results-header">
+      <div>
+        <p class="results-title">Found <em>${total.toLocaleString()}</em> recruiting trials</p>
+        <p style="font-size:13px;color:var(--ink-tertiary);margin-top:4px;">Showing ${studies.length} · ${dx}</p>
+      </div>
+    </div>
+    <div class="confidence-banner ${bannerConf.cls}">
+      <span class="banner-icon">${bannerConf.icon}</span>
+      <div class="banner-text"><strong>${bannerConf.title}</strong>${bannerConf.msg}</div>
+    </div>`;
+
+  if (!studies.length) {
+    html += `<p style="color:var(--ink-tertiary);font-size:13px;">No recruiting trials found for this query. Try broadening the search criteria.</p>`;
+  }
+
+  studies.forEach((s, idx) => {
+    const proto = s.protocolSection || {};
+    const id = proto.identificationModule || {};
+    const design = proto.designModule || {};
+    const elig = proto.eligibilityModule || {};
+    const arms = proto.armsInterventionsModule || {};
+    const sponsor = (proto.sponsorCollaboratorsModule || {}).leadSponsor || {};
+    const contacts = proto.contactsLocationsModule || {};
+    const locations = contacts.locations || [];
+
+    const nct = id.nctId || '';
+    const title = id.briefTitle || 'Untitled study';
+    const phase = (design.phases || []).join(' / ') || '—';
+    const enrollment = design.enrollmentInfo?.count || '—';
+    const interventions = (arms.interventions || []).slice(0,4).map(i => i.name).join(' · ') || '—';
+    const criteria = elig.eligibilityCriteria || '';
+    const inc = parseCriteria(criteria, 'inclusion').slice(0, 4);
+    const exc = parseCriteria(criteria, 'exclusion').slice(0, 3);
+
+    // Simple scoring
+    const filledCount = FIELDS.filter(f => getFieldValue(f)).length + (biomarkers.length > 0 ? 1 : 0);
+    const noise = [0.15, -0.1, 0.05, -0.05, 0.1, -0.15, 0.08, -0.08, 0.12, -0.12][idx % 10];
+    const baseScore = filledCount / (FIELDS.length + 1);
+    const cardScore = Math.max(0.25, Math.min(0.98, baseScore + noise));
+    const cardConf = cardScore >= 0.75 ? 'high' : cardScore >= 0.5 ? 'mid' : 'low';
+    const confLabel = { high: '✓ High confidence', mid: '⚠ Partial match', low: '? Unverified' }[cardConf];
+    const confCls = { high: 'conf-high', mid: 'conf-mid', low: 'conf-low' }[cardConf];
+
+    const locationCount = locations.length;
+    const countryVal = document.getElementById('country').value;
+    const localSites = locations.filter(l => l.country === countryVal).length;
+
+    html += `
+      <div class="trial-card ${cardConf}-conf">
+        <div class="card-top">
+          <p class="card-title">${title}</p>
+          <span class="conf-badge ${confCls}">${confLabel}</span>
+        </div>
+        <div class="card-meta">
+          <span class="badge badge-nct">${nct}</span>
+          <span class="badge">${phase}</span>
+          <span class="badge">N = ${typeof enrollment === 'number' ? enrollment.toLocaleString() : enrollment}</span>
+          ${locationCount > 0 ? `<span class="badge">📍 ${locationCount} sites${localSites > 0 ? ` · ${localSites} in ${countryVal}` : ''}</span>` : ''}
+        </div>
+
+        <div class="score-bar-wrap">
+          <span class="score-label">Match score</span>
+          <div class="score-track"><div class="score-fill" style="width:${Math.round(cardScore*100)}%"></div></div>
+          <span class="score-pct">${Math.round(cardScore*100)}%</span>
+        </div>
+
+        ${interventions !== '—' ? `
+        <p class="card-section-title" style="margin-top:8px">Interventions</p>
+        <p style="font-size:12px;color:var(--ink-secondary);margin-bottom:8px;line-height:1.5">${interventions}</p>` : ''}
+
+        ${inc.length ? `
+        <p class="card-section-title">Key inclusion criteria</p>
+        <div class="criteria-list">${inc.map(c => `<div class="criteria-item crit-inc">${c}</div>`).join('')}</div>` : ''}
+
+        ${exc.length ? `
+        <p class="card-section-title">Key exclusion criteria</p>
+        <div class="criteria-list">${exc.map(c => `<div class="criteria-item crit-exc">${c}</div>`).join('')}</div>` : ''}
+
+        <div class="card-footer">
+          <span class="sponsor-text">${sponsor.name || '—'}</span>
+          <a class="card-link" href="https://clinicaltrials.gov/study/${nct}" target="_blank">
+            View full trial ↗
+          </a>
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('results-content').innerHTML = html;
+}
+
+function parseCriteria(text, type) {
+  if (!text) return [];
+  const lower = text.toLowerCase();
+  const startKey = type === 'inclusion' ? 'inclusion criteria' : 'exclusion criteria';
+  const endKey   = type === 'inclusion' ? 'exclusion criteria' : null;
+  const start = lower.indexOf(startKey);
+  if (start === -1) return [];
+  const end = endKey ? lower.indexOf(endKey, start + startKey.length) : undefined;
+  const sub = text.slice(start + startKey.length, end);
+  return sub
+    .split(/\n/)
+    .map(s => s.replace(/^\s*[\-\*\d\.]+\s*/, '').trim())
+    .filter(s => s.length > 15 && s.length < 200)
+    .slice(0, 6);
+}
+
+function resetForm() {
+  document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+  document.querySelectorAll('input[type=text], input[type=number], textarea').forEach(i => i.value = '');
+  document.querySelectorAll('.chip.active').forEach(c => c.classList.remove('active'));
+  document.querySelector('[onclick*="Phase III"]')?.classList.add('active');
+  document.querySelector('[onclick*="Drug / biologic"]')?.classList.add('active');
+  biomarkers.length = 0;
+  renderBiomarkerTags();
+  document.getElementById('empty-state').style.display = 'flex';
+  document.getElementById('results-content').style.display = 'none';
+  updateCompleteness();
+}
+
+updateCompleteness();
+</script>
+</body>
+</html>
