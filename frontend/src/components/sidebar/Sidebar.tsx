@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { PatientProfile } from '../../types';
+import type { ScoringVariant } from '../../api/matcher';
 import {
   BIOMARKER_HINT,
   COMORBIDITIES,
@@ -27,9 +28,13 @@ interface SidebarProps {
   onProfileChange: (profile: PatientProfile) => void;
   onSearch: () => void;
   onReset: () => void;
+  variant: ScoringVariant;
+  onVariantChange: (v: ScoringVariant) => void;
+  topN: number;
+  onTopNChange: (n: number) => void;
 }
 
-export function Sidebar({ profile, onProfileChange, onSearch, onReset }: SidebarProps) {
+export function Sidebar({ profile, onProfileChange, onSearch, onReset, variant, onVariantChange, topN, onTopNChange }: SidebarProps) {
   const [validationError, setValidationError] = useState<string | null>(null);
   const completeness = computeCompleteness(profile);
 
@@ -209,6 +214,41 @@ export function Sidebar({ profile, onProfileChange, onSearch, onReset }: Sidebar
             {validationError}
           </div>
         )}
+
+        <div style={{ margin: '4px 0 10px' }}>
+          <span style={{ fontSize: 11, color: 'var(--ink-tertiary)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+            Scoring
+          </span>
+          <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+            {([['v2', 'Improved'], ['v1', 'Original']] as const).map(([v, label]) => (
+              <button
+                key={v}
+                onClick={() => onVariantChange(v)}
+                style={{
+                  flex: 1, padding: '6px 8px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  borderRadius: 'var(--radius)',
+                  border: variant === v ? '1px solid var(--accent, #3b82f6)' : '1px solid var(--border, #d1d5db)',
+                  background: variant === v ? 'var(--accent-light, rgba(59,130,246,0.1))' : 'transparent',
+                  color: variant === v ? 'var(--accent, #2563eb)' : 'var(--ink-secondary)',
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+            <span style={{ fontSize: 12, color: 'var(--ink-secondary)' }}>Resultados</span>
+            <select
+              value={topN}
+              onChange={e => onTopNChange(Number(e.target.value))}
+              style={{ flex: 1, padding: '6px 8px', fontSize: 12, borderRadius: 'var(--radius)' }}
+            >
+              {[10, 20, 30, 50].map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         <button className="submit-btn" onClick={handleSearch}>
           Search matching trials →

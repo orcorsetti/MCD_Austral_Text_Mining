@@ -13,10 +13,13 @@ import pandas as pd
 
 from .embeddings import EmbeddingModel
 from .llm_generation import explain_trials
-from .profile import Patient, build_condition_query, build_criteria_query, build_rerank_query, patient_summary
+from .profile import (
+    Patient, build_condition_query, build_criteria_query, build_rerank_query,
+    disease_keywords, patient_summary,
+)
 from .rerank import CrossEncoderReranker
 from .retrieval import condition_candidates, filter_studies, score_criteria, top_criteria
-from .scoring import composite_score, confidence_for, final_score, geo_score
+from .scoring import composite_score, confidence_for, exclusion_pass, final_score, final_score_v2, geo_score
 
 DATA_DIR = Path(__file__).resolve().parent.parent / 'data'
 
@@ -27,7 +30,8 @@ CONDITION_TOP_N      = 200  # candidatos tras el filtro semantico de condicion
 INCLUSION_TOP_K      = 3    # criterios promediados por estudio (score bi-encoder)
 MIN_INCLUSION_CRITERIA = 3  # descarta estudios muy genericos (pocos criterios de inclusion)
 RERANK_POOL          = 50   # estudios que pasan al cross-encoder
-RESULT_TOP_N         = 10   # estudios devueltos
+RESULT_TOP_N         = 10   # estudios devueltos (default)
+MAX_RESULT_TOP_N     = 50   # tope para el parametro top_n del request
 EXPLAIN_INCLUSION_K  = 3    # criterios de inclusion citados al LLM
 EXPLAIN_EXCLUSION_K  = 2    # criterios de exclusion citados al LLM
 MAX_DISPLAY_CRITERIA = 4    # criterios mostrados por tarjeta
@@ -63,6 +67,13 @@ class TrialMatcherEngine:
 
         self.condition_text = dict(zip(self.condition_meta['nct_id'], self.condition_meta['condition_text']))
 
+        # Blob de enfermedad por estudio (condition_text + titulo, lowercased) para el gate v2.
+        titles = self.metadata_df['brief_title'].to_dict()
+        self.disease_blob = {
+            n: (str(ct) + ' ' + str(titles.get(n, ''))).lower()
+            for n, ct in self.condition_text.items()
+        }
+
         # Estudios con suficientes criterios de inclusion (descarta los muy genericos).
         inc_counts = self.inclusion_meta.groupby('nct_id').size()
         self.studies_min_criteria = set(inc_counts[inc_counts >= MIN_INCLUSION_CRITERIA].index)
@@ -72,12 +83,13 @@ class TrialMatcherEngine:
         self.reranker        = CrossEncoderReranker()
         self._lock = threading.Lock()  # serializa el acceso a GPU entre requests
 
-    def match(self, patient: Patient, missing: list = None) -> dict:
-        """Pipeline online completo -> dict con shape MatchResult del frontend."""
+    def match(self, patient: Patient, missing: list = None, variant: str = 'v2', top_n: int = RESULT_TOP_N) -> dict:
+        """Pipeline online completo. variant 'v1' = original; 'v2' = gate por enfermedad + MedCPT."""
+        top_n = max(1, min(int(top_n), MAX_RESULT_TOP_N))
         with self._lock:
-            return self._match(patient)
+            return self._match_v2(patient, top_n) if variant == 'v2' else self._match(patient, top_n)
 
-    def _match(self, patient: Patient) -> dict:
+    def _match(self, patient: Patient, top_n: int) -> dict:
         cond_q = self.condition_model.encode([build_condition_query(patient)])[0]
         crit_q = self.criteria_model.encode([build_criteria_query(patient)])[0]
 
@@ -89,8 +101,8 @@ class TrialMatcherEngine:
         inclusion_scores = score_criteria(crit_q, self.inclusion_meta, self.inclusion_emb, candidate_ids, INCLUSION_TOP_K)
         exclusion_scores = score_criteria(crit_q, self.exclusion_meta, self.exclusion_emb, candidate_ids, INCLUSION_TOP_K)
 
-        shortlist_ids = composite_score(inclusion_scores, exclusion_scores, candidate_ids).head(RERANK_POOL)['nct_id'].tolist()
-        ranked = self._rerank(shortlist_ids, build_rerank_query(patient), crit_q, patient.country, exclusion_scores)
+        shortlist_ids = composite_score(inclusion_scores, exclusion_scores, candidate_ids).head(max(RERANK_POOL, top_n))['nct_id'].tolist()
+        ranked = self._rerank(shortlist_ids, build_rerank_query(patient), crit_q, patient.country, exclusion_scores, top_n)
 
         # La explicacion LLM se genera por separado (POST /api/explain) para no bloquear la busqueda.
         trials = [self._to_trial_match(row, patient.country) for _, row in ranked.iterrows()]
@@ -103,7 +115,7 @@ class TrialMatcherEngine:
         return f"{title}. {self.condition_text.get(nct_id, '')} {' '.join(inc)}"[:1500]
 
     def _rerank(self, shortlist_ids: list, rerank_query: str, crit_q: np.ndarray,
-                country: str, exclusion_scores: dict) -> pd.DataFrame:
+                country: str, exclusion_scores: dict, top_n: int) -> pd.DataFrame:
         """Cross-encoder (Score General) + geo + 'pasa exclusiones' -> composite ponderado."""
         logits = self.reranker.score([(rerank_query, self._rerank_doc(n, crit_q)) for n in shortlist_ids])
         general = _minmax(logits)  # Score General normalizado a 0-1 dentro del shortlist
@@ -120,7 +132,50 @@ class TrialMatcherEngine:
         return (
             pd.DataFrame(rows)
             .sort_values('final_score', ascending=False)
-            .head(RESULT_TOP_N)
+            .head(top_n)
+            .reset_index(drop=True)
+        )
+
+    # --- v2: gate por enfermedad (lexico) + MedCPT + exclusion neutral ---
+
+    def _disease_gate(self, patient: Patient, eligible_ids: set) -> list:
+        """nct_ids elegibles cuyo condition_text/titulo contiene la enfermedad del paciente."""
+        kws = disease_keywords(patient.diagnosis)
+        gated = [n for n in eligible_ids if any(k in self.disease_blob.get(n, '') for k in kws)]
+        return gated or list(eligible_ids)  # fallback: si el gate queda vacio, no filtra
+
+    def _match_v2(self, patient: Patient, top_n: int) -> dict:
+        crit_q = self.criteria_model.encode([build_criteria_query(patient)])[0]
+        eligible_ids = filter_studies(self.clinical_df, patient.age) & self.studies_min_criteria
+        gated = self._disease_gate(patient, eligible_ids)
+
+        inclusion_scores = score_criteria(crit_q, self.inclusion_meta, self.inclusion_emb, gated, INCLUSION_TOP_K)
+        exclusion_scores = score_criteria(crit_q, self.exclusion_meta, self.exclusion_emb, gated, INCLUSION_TOP_K)
+
+        shortlist_ids = sorted(gated, key=lambda n: inclusion_scores.get(n, 0.0), reverse=True)[:max(RERANK_POOL, top_n)]
+        ranked = self._rerank_v2(shortlist_ids, build_rerank_query(patient), crit_q, patient.country, inclusion_scores, exclusion_scores, top_n)
+        trials = [self._to_trial_match(row, patient.country) for _, row in ranked.iterrows()]
+        return {'totalCount': len(gated), 'trials': trials}
+
+    def _rerank_v2(self, shortlist_ids: list, rerank_query: str, crit_q: np.ndarray,
+                   country: str, inclusion_scores: dict, exclusion_scores: dict, top_n: int) -> pd.DataFrame:
+        """MedCPT (enfermedad) + inclusion + exclusion-pass (neutral) + geo -> score final v2."""
+        logits  = self.reranker.score([(rerank_query, self._rerank_doc(n, crit_q)) for n in shortlist_ids])
+        disease = _minmax(logits)
+        inc     = _minmax([inclusion_scores.get(n, 0.0) for n in shortlist_ids])
+        exc     = exclusion_pass([exclusion_scores.get(n, float('nan')) for n in shortlist_ids])
+
+        rows = []
+        for nct_id, d, i, e in zip(shortlist_ids, disease, inc, exc):
+            geo = geo_score(list(self.metadata_df.loc[nct_id, 'location_countries']), country)
+            rows.append({
+                'nct_id': nct_id, 'reranker_score': d, 'inclusion_norm': i,
+                'exclusion_pass': e, 'geo_score': geo, 'final_score': final_score_v2(d, i, e, geo),
+            })
+        return (
+            pd.DataFrame(rows)
+            .sort_values('final_score', ascending=False)
+            .head(top_n)
             .reset_index(drop=True)
         )
 

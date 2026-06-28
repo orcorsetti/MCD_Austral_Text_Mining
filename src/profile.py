@@ -1,5 +1,35 @@
 """Perfil del paciente y adaptacion desde el formulario del frontend (PatientProfile)."""
+import re
 from dataclasses import dataclass, field
+
+# Diagnostico del form -> palabras clave que deben aparecer en condition_text/titulo (gate v2).
+DISEASE_KEYWORDS = {
+    'nsclc': ['lung'], 'sclc': ['lung'], 'lung': ['lung'], 'mesothelioma': ['mesotheli'],
+    'breast': ['breast'],
+    'colorectal': ['colorectal', 'colon', 'rectal'], 'crc': ['colorectal', 'colon', 'rectal'],
+    'gastric': ['gastric', 'stomach', 'gastroesophageal'], 'gej': ['gastric', 'gastroesophageal'],
+    'hepatocellular': ['hepatocellular', 'liver'], 'hcc': ['hepatocellular', 'liver'],
+    'pancrea': ['pancrea'], 'cholangio': ['cholangio', 'biliary'], 'biliary': ['biliary', 'cholangio'],
+    'esophageal': ['esophag'],
+    'prostate': ['prostate'], 'urothelial': ['urotheli', 'bladder'], 'bladder': ['bladder', 'urotheli'],
+    'renal': ['renal', 'kidney'], 'rcc': ['renal', 'kidney'],
+    'cervical': ['cervic'], 'endometrial': ['endometrial', 'uterine'], 'uterine': ['uterine', 'endometrial'],
+    'ovarian': ['ovarian', 'fallopian', 'peritoneal'],
+    'melanoma': ['melanoma'], 'hnscc': ['head and neck', 'neck'],
+    'thyroid': ['thyroid'], 'sarcoma': ['sarcoma'], 'glioblastoma': ['glioblastoma', 'glioma'], 'gbm': ['glioblastoma', 'glioma'],
+    'neuroendocrine': ['neuroendocrine'], 'net': ['neuroendocrine'],
+    'dlbcl': ['lymphoma'], 'lymphoma': ['lymphoma'], 'myeloma': ['myeloma'],
+    'aml': ['myeloid leukemia'], 'cll': ['lymphocytic leukemia'], 'cml': ['myeloid leukemia'],
+}
+
+
+def disease_keywords(diagnosis: str) -> list:
+    """Palabras clave de enfermedad para el gate lexico (mapa + fallback a palabras del diagnostico)."""
+    d = diagnosis.lower()
+    for key, kws in DISEASE_KEYWORDS.items():
+        if key in d:
+            return kws
+    return [w for w in re.findall(r'[a-z]+', d) if len(w) > 3]
 
 @dataclass
 class Patient:

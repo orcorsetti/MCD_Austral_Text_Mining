@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { PatientProfile, SearchState } from './types';
 import { EMPTY_PROFILE } from './types';
+import type { ScoringVariant } from './api/matcher';
 import { mlMatcher } from './api/mlBackend';
 import { Header } from './components/Header';
 import { Sidebar } from './components/sidebar/Sidebar';
@@ -16,12 +17,16 @@ function App() {
   // Snapshot of the profile at search time, so editing the form doesn't
   // retroactively change how the displayed results are annotated.
   const [searchedProfile, setSearchedProfile] = useState<PatientProfile | null>(null);
+  // Scoring variant for A/B comparison: 'v2' = disease-gated (default), 'v1' = original.
+  const [variant, setVariant] = useState<ScoringVariant>('v2');
+  // Number of studies to return.
+  const [topN, setTopN] = useState(10);
 
   const handleSearch = async () => {
     setSearchState({ status: 'loading' });
     setSearchedProfile(profile);
     try {
-      const result = await matcher.match(profile);
+      const result = await matcher.match(profile, variant, topN);
       setSearchState({ status: 'success', result });
     } catch (error) {
       setSearchState({
@@ -46,6 +51,10 @@ function App() {
           onProfileChange={setProfile}
           onSearch={handleSearch}
           onReset={handleReset}
+          variant={variant}
+          onVariantChange={setVariant}
+          topN={topN}
+          onTopNChange={setTopN}
         />
         <ResultsPanel searchState={searchState} searchedProfile={searchedProfile} />
       </div>

@@ -1,14 +1,21 @@
 """Score compuesto por estudio y mapeo a confianza para el frontend."""
+import numpy as np
 import pandas as pd
 
 # Score bi-encoder (shortlist previo al reranker).
 W_INCLUSION = 1.0
 W_EXCLUSION = 0.5
 
-# Score final compuesto: reranker (Score General) + geo + "pasa exclusiones".
+# v1 - Score final compuesto: reranker (Score General) + geo + "pasa exclusiones".
 W_RERANK = 0.6
 W_GEO    = 0.2
 W_EXCL   = 0.2  # premia que el paciente NO matchee criterios de exclusion
+
+# v2 - Score final con gate por enfermedad: reranker + inclusion + exclusion + geo.
+W2_DISEASE   = 0.50
+W2_INCLUSION = 0.25
+W2_EXCL      = 0.15
+W2_GEO       = 0.10
 
 
 def composite_score(
@@ -46,6 +53,21 @@ def geo_score(countries: list, patient_country: str) -> float:
 def final_score(reranker: float, geo: float, exclusion_pass: float) -> float:
     """Combina Score General (reranker), geo y 'pasa exclusiones' (0-1) en el score final."""
     return W_RERANK * reranker + W_GEO * geo + W_EXCL * exclusion_pass
+
+
+def exclusion_pass(values: list) -> list:
+    """1 - exclusion normalizada; estudios SIN exclusion (NaN) -> NEUTRAL 0.5 (no premio gratis)."""
+    arr = np.array(values, dtype=float)
+    present = arr[~np.isnan(arr)]
+    if len(present) < 2:
+        return [0.5] * len(arr)
+    lo, hi = present.min(), present.max()
+    return [0.5 if np.isnan(v) else 1.0 - (v - lo) / (hi - lo) for v in arr]
+
+
+def final_score_v2(disease: float, inclusion: float, exclusion_pass: float, geo: float) -> float:
+    """Score final v2 (post gate por enfermedad): reranker + inclusion + exclusion + geo."""
+    return W2_DISEASE * disease + W2_INCLUSION * inclusion + W2_EXCL * exclusion_pass + W2_GEO * geo
 
 
 def confidence_for(score: float) -> str:

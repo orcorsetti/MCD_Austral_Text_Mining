@@ -1,5 +1,5 @@
 import type { MatchResult, PatientProfile } from '../types';
-import type { TrialMatcher } from './matcher';
+import type { ScoringVariant, TrialMatcher } from './matcher';
 
 /**
  * ML backend: POSTs the patient profile to the RAG matching service
@@ -9,8 +9,8 @@ import type { TrialMatcher } from './matcher';
  * The request is proxied to the Python service (see vite.config.ts -> /api).
  */
 export const mlMatcher: TrialMatcher = {
-  async match(profile: PatientProfile): Promise<MatchResult> {
-    const res = await fetch('/api/match', {
+  async match(profile: PatientProfile, variant: ScoringVariant = 'v2', topN = 10): Promise<MatchResult> {
+    const res = await fetch(`/api/match?variant=${variant}&top_n=${topN}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(profile),

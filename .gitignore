@@ -32,3 +32,9 @@ data/06_inclusion_embeddings_all-MiniLM-L6-v2.npy
 data/06_inclusion_embeddings_neuml__pubmedbert-base-embeddings.npy
 data/06_inclusion_embeddings.npy
 data/06_inclusion_meta.parquet
+
+# Local deploy tools (cloudflared binary)
+tools/
+
+# Sandbox generated data
+sandbox/data/
