@@ -45,8 +45,26 @@ class Patient:
     tx_setting: str = ''
     prior_lines: str = ''
     prior_treatment_classes: list[str] = field(default_factory=list)
+    phases: list[str] = field(default_factory=list)
     free_text: str = ''
     country: str = ''
+
+
+# Fase del form -> tokens de fase de ClinicalTrials.gov (en metadata_df['phases']).
+FORM_PHASE_MAP = {
+    'Phase I':   {'PHASE1', 'EARLY_PHASE1'},
+    'Phase II':  {'PHASE2'},
+    'Phase III': {'PHASE3'},
+    'Phase IV':  {'PHASE4'},
+}
+
+
+def requested_phase_tokens(phases: list) -> set:
+    """Tokens de fase pedidos (vacio = sin filtro de fase)."""
+    tokens = set()
+    for p in phases:
+        tokens |= FORM_PHASE_MAP.get(p, set())
+    return tokens
 
 
 def patient_from_profile(profile: dict) -> Patient:
@@ -64,6 +82,7 @@ def patient_from_profile(profile: dict) -> Patient:
         tx_setting=profile.get('treatmentSetting', ''),
         prior_lines=profile.get('priorLines', ''),
         prior_treatment_classes=profile.get('priorTreatmentClasses', []),
+        phases=profile.get('phases', []),
         free_text=profile.get('freeText', ''),
         country=profile.get('country', ''),
     )
