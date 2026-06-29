@@ -46,8 +46,31 @@ class Patient:
     prior_lines: str = ''
     prior_treatment_classes: list[str] = field(default_factory=list)
     phases: list[str] = field(default_factory=list)
+    intervention_types: list[str] = field(default_factory=list)
     free_text: str = ''
     country: str = ''
+
+
+# Tipo de intervencion del form -> keywords a buscar en arm labels + titulo.
+# Heuristico por texto (no tenemos el InterventionType estructurado de CT.gov).
+# 'Drug / biologic' no tiene keywords a proposito: es demasiado amplio, no filtra.
+INTERVENTION_KEYWORDS = {
+    'Radiation': ['radiation', 'radiother', 'radiotherapy', 'sbrt', 'stereotactic', 'brachytherap', 'proton'],
+    'Immunotherapy': [
+        'immunother', 'immune checkpoint', 'checkpoint', 'pd-1', 'pd-l1', 'pd1', 'pdl1',
+        'pembrolizumab', 'nivolumab', 'atezolizumab', 'durvalumab', 'ipilimumab', 'tremelimumab',
+        'cemiplimab', 'tislelizumab', 'sintilimab', 'vaccine',
+    ],
+    'Cell therapy': ['car-t', 'car t', 'cart cell', 'cell therapy', 'tils', 'til ', 'nk cell', 'tcr-t', 'adoptive cell'],
+}
+
+
+def requested_intervention_keywords(types: list) -> list:
+    """Keywords de las modalidades especificas pedidas (Drug/biologic se ignora: no filtra)."""
+    kws = []
+    for t in types:
+        kws += INTERVENTION_KEYWORDS.get(t, [])
+    return kws
 
 
 # Fase del form -> tokens de fase de ClinicalTrials.gov (en metadata_df['phases']).
@@ -83,6 +106,7 @@ def patient_from_profile(profile: dict) -> Patient:
         prior_lines=profile.get('priorLines', ''),
         prior_treatment_classes=profile.get('priorTreatmentClasses', []),
         phases=profile.get('phases', []),
+        intervention_types=profile.get('interventionTypes', []),
         free_text=profile.get('freeText', ''),
         country=profile.get('country', ''),
     )

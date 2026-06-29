@@ -15,7 +15,7 @@ from .embeddings import EmbeddingModel
 from .llm_generation import explain_trials
 from .profile import (
     Patient, build_condition_query, build_criteria_query, build_rerank_query,
-    disease_keywords, patient_summary, requested_phase_tokens,
+    disease_keywords, patient_summary, requested_intervention_keywords, requested_phase_tokens,
 )
 from .rerank import CrossEncoderReranker
 from .retrieval import condition_candidates, filter_studies, score_criteria, top_criteria
@@ -81,6 +81,13 @@ class TrialMatcherEngine:
         # Fases por estudio (para el filtro de fase del formulario).
         self.study_phases = {n: set(p) for n, p in self.metadata_df['phases'].items()}
 
+        # Blob de intervencion por estudio (arm labels + titulo) para el filtro por modalidad.
+        interventions = self.metadata_df['interventions'].to_dict()
+        self.intervention_blob = {
+            n: (' '.join(map(str, interventions.get(n, []))) + ' ' + str(titles.get(n, ''))).lower()
+            for n in interventions
+        }
+
         self.criteria_model  = EmbeddingModel(CRITERIA_MODEL_NAME)
         self.condition_model = EmbeddingModel(CONDITION_MODEL_NAME)
         self.reranker        = CrossEncoderReranker()
@@ -98,6 +105,7 @@ class TrialMatcherEngine:
 
         eligible_ids  = filter_studies(self.clinical_df, patient.age) & self.studies_min_criteria
         eligible_ids  = self._phase_filter(eligible_ids, patient)
+        eligible_ids  = self._intervention_filter(eligible_ids, patient)
         candidate_ids = condition_candidates(
             cond_q, self.condition_meta, self.condition_emb, eligible_ids, CONDITION_TOP_N
         )
@@ -147,6 +155,13 @@ class TrialMatcherEngine:
             return set(ids)
         return {n for n in ids if self.study_phases.get(n, set()) & wanted}
 
+    def _intervention_filter(self, ids, patient: Patient) -> set:
+        """Filtra por modalidad (keywords sobre arm labels + titulo). Drug/biologic no filtra."""
+        kws = requested_intervention_keywords(patient.intervention_types)
+        if not kws:
+            return set(ids)
+        return {n for n in ids if any(k in self.intervention_blob.get(n, '') for k in kws)}
+
     # --- v2: gate por enfermedad (lexico) + MedCPT + exclusion neutral ---
 
     def _disease_gate(self, patient: Patient, eligible_ids: set) -> list:
@@ -159,6 +174,7 @@ class TrialMatcherEngine:
         crit_q = self.criteria_model.encode([build_criteria_query(patient)])[0]
         eligible_ids = filter_studies(self.clinical_df, patient.age) & self.studies_min_criteria
         eligible_ids = self._phase_filter(eligible_ids, patient)
+        eligible_ids = self._intervention_filter(eligible_ids, patient)
         gated = self._disease_gate(patient, eligible_ids)
 
         inclusion_scores = score_criteria(crit_q, self.inclusion_meta, self.inclusion_emb, gated, INCLUSION_TOP_K)
