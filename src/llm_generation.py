@@ -1,4 +1,4 @@
-"""Explicacion de elegibilidad generada por un LLM local (LM Studio / Qwen).
+"""Explicacion de elegibilidad generada por un LLM local (LM Studio).
 
 Toma el paciente y los criterios que matchearon por estudio, y pide al LLM una
 explicacion corta por ensayo. Una sola llamada batcheada para todos los estudios.
@@ -9,10 +9,10 @@ import os
 import requests
 
 LM_STUDIO_URL = os.environ.get('LM_STUDIO_URL', 'http://localhost:1234/v1/chat/completions')
-LLM_MODEL     = os.environ.get('LM_STUDIO_MODEL', 'qwen/qwen3.6-27b')
+LLM_MODEL     = os.environ.get('LM_STUDIO_MODEL', 'google/gemma-4-e4b')
 LLM_TIMEOUT   = 120
 
-# Prefill que desactiva el modo de razonamiento de Qwen3 (mucho mas rapido).
+# Prefill que desactiva el razonamiento de Qwen3. Otros modelos (gemma) no lo necesitan.
 NO_THINK_PREFILL = '<think></think>'
 
 SYSTEM_PROMPT = (
@@ -49,18 +49,16 @@ def _parse_json_object(content: str) -> dict:
 
 def explain_trials(patient_summary: str, missing: list, trials: list) -> dict:
     """Devuelve {nctId: explicacion} para los estudios dados via el LLM local."""
+    messages = [
+        {'role': 'system', 'content': SYSTEM_PROMPT},
+        {'role': 'user', 'content': _build_user_prompt(patient_summary, missing, trials)},
+    ]
+    if 'qwen' in LLM_MODEL.lower():  # solo Qwen3 necesita el prefill para no razonar
+        messages.append({'role': 'assistant', 'content': NO_THINK_PREFILL})
+
     response = requests.post(
         LM_STUDIO_URL,
-        json={
-            'model': LLM_MODEL,
-            'messages': [
-                {'role': 'system', 'content': SYSTEM_PROMPT},
-                {'role': 'user', 'content': _build_user_prompt(patient_summary, missing, trials)},
-                {'role': 'assistant', 'content': NO_THINK_PREFILL},
-            ],
-            'temperature': 0.3,
-            'max_tokens': 1200,
-        },
+        json={'model': LLM_MODEL, 'messages': messages, 'temperature': 0.3, 'max_tokens': 1200},
         timeout=LLM_TIMEOUT,
     )
     response.raise_for_status()
